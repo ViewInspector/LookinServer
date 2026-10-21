@@ -197,7 +197,13 @@ NSString *const LKS_ConnectionDidEndNotificationName = @"LKS_ConnectionDidEndNot
             object = unarchivedObject;
         }
     }
-    [self.requestHandler handleRequestType:type tag:tag object:object];
+    // Peertalk may invoke us on an I/O queue targeted at the main thread.
+    // Dispatch UI requests onto the main queue explicitly, and discard requests
+    // from a channel that disconnected before this queued work runs.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (channel != self.peerChannel_ || ![channel isConnected]) { return; }
+        [self.requestHandler handleRequestType:type tag:tag object:object];
+    });
 }
 
 /// 当 Client 端链接成功时，该方法会被调用，然后 channel 的状态会变成 connected

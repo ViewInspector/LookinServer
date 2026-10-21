@@ -11,7 +11,9 @@
 
 
 #import "LookinAppInfo.h"
+#if TARGET_OS_IPHONE
 #import "LKS_MultiplatformAdapter.h"
+#endif
 
 static NSString * const CodingKey_AppIcon = @"1";
 static NSString * const CodingKey_Screenshot = @"2";

@@ -66,6 +66,24 @@ let package = Package(
             cxxSettings: [
                 .define("SHOULD_COMPILE_LOOKIN_SERVER", to: "1", .when(configuration: .debug))
             ]
+        ),
+        .testTarget(
+            name: "SwiftUIRuntimeTests",
+            dependencies: ["LookinServer", "LookinServerSwift"],
+            path: "Tests/SwiftUIRuntimeTests",
+            cSettings: [
+                .define("SHOULD_COMPILE_LOOKIN_SERVER", to: "1", .when(configuration: .debug)),
+                .headerSearchPath("../../Src/Base"),
+                .headerSearchPath("../../Src/Main/Shared"),
+                .headerSearchPath("../../Src/Main/Shared/Category"),
+                .headerSearchPath("../../Src/Main/Shared/Peertalk"),
+                .headerSearchPath("../../Src/Main/Server"),
+                .headerSearchPath("../../Src/Main/Server/Category"),
+                .headerSearchPath("../../Src/Main/Server/Connection"),
+                .headerSearchPath("../../Src/Main/Server/Connection/RequestHandler"),
+                .headerSearchPath("../../Src/Main/Server/Others")
+            ],
+            swiftSettings: [.define("SHOULD_COMPILE_LOOKIN_SERVER", .when(configuration: .debug))]
         )
     ]
 )

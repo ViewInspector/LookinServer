@@ -9,12 +9,16 @@
 #import "LKS_CustomAttrModificationHandler.h"
 #import "LKS_CustomAttrSetterManager.h"
 #import "UIColor+LookinServer.h"
+#import "LKS_SwiftUIDisplayItemsMaker.h"
 
 @implementation LKS_CustomAttrModificationHandler
 
 + (BOOL)handleModification:(LookinCustomAttrModification *)modification {
     if (!modification || modification.customSetterID.length == 0) {
         return NO;
+    }
+    if ([modification.customSetterID hasPrefix:@"lookin.swiftui.binding."]) {
+        return [LKS_SwiftUIDisplayItemsMaker modifyStateValue:modification.value identifier:modification.customSetterID] == nil;
     }
     switch (modification.attrType) {
         case LookinAttrTypeNSString: {

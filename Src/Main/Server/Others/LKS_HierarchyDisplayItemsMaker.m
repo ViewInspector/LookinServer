@@ -20,6 +20,7 @@
 #import "LKS_CustomDisplayItemsMaker.h"
 #import "LKS_CustomAttrSetterManager.h"
 #import "LKS_MultiplatformAdapter.h"
+#import "LKS_SwiftUIDisplayItemsMaker.h"
 
 @implementation LKS_HierarchyDisplayItemsMaker
 
@@ -103,6 +104,18 @@
         }];
         item.subitems = [allSubitems copy];
     }
+    // SwiftUI 的视图并不是 CALayer/UIView，这里把 SwiftUI 的视图树挂在 hosting view 下面
+    if (hostView) {
+        NSArray<LookinDisplayItem *> *swiftUIItems = [LKS_SwiftUIDisplayItemsMaker displayItemsForHostingView:hostView];
+        if (hasScreenshots) { [LKS_SwiftUIDisplayItemsMaker populateScreenshotsForItems:swiftUIItems]; }
+        if (swiftUIItems.count) {
+            if (item.subitems) {
+                item.subitems = [item.subitems arrayByAddingObjectsFromArray:swiftUIItems];
+            } else {
+                item.subitems = swiftUIItems;
+            }
+        }
+    }
     if (readCustomInfo) {
         NSArray<LookinDisplayItem *> *customSubitems = [[[LKS_CustomDisplayItemsMaker alloc] initWithLayer:layer saveAttrSetter:saveCustomSetter] make];
         if (customSubitems.count > 0) {
@@ -118,7 +131,7 @@
 }
 
 + (NSArray<LookinDisplayItem *> *)subitemsOfLayer:(CALayer *)layer {
-    if (!layer || layer.sublayers.count == 0) {
+    if (!layer) {
         return @[];
     }
     [[LKS_TraceManager sharedInstance] reload];
@@ -132,6 +145,9 @@
             [resultSubitems addObject:sublayer_item];
         }
     }];
+
+    NSArray *swiftUIItems = [LKS_SwiftUIDisplayItemsMaker displayItemsForHostingView:layer.lks_hostView];
+    if (swiftUIItems.count) { [resultSubitems addObjectsFromArray:swiftUIItems]; }
 
     NSArray<LookinDisplayItem *> *customSubitems = [[[LKS_CustomDisplayItemsMaker alloc] initWithLayer:layer saveAttrSetter:YES] make];
     if (customSubitems.count > 0) {

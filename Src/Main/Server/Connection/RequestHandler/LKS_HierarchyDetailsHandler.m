@@ -16,6 +16,7 @@
 #import "LookinServerDefines.h"
 #import "LKS_CustomAttrGroupsMaker.h"
 #import "LKS_HierarchyDisplayItemsMaker.h"
+#import "LKS_SwiftUIDisplayItemsMaker.h"
 
 @interface LKS_HierarchyDetailsHandler ()
 
@@ -74,6 +75,9 @@
             itemDetail.displayItemOid = task.oid;
             
             id object = [NSObject lks_objectWithOid:task.oid];
+            if ([LKS_SwiftUIDisplayItemsMaker isSnapshotObject:object]) {
+                return [LKS_SwiftUIDisplayItemsMaker detailForObject:object task:task];
+            }
             if (!object || ![object isKindOfClass:[CALayer class]]) {
                 itemDetail.failureCode = -1;
                 return itemDetail;

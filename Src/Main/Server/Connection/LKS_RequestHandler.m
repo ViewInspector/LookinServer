@@ -26,6 +26,7 @@
 #import "LKS_AttrModificationPatchHandler.h"
 #import "LKS_HierarchyDetailsHandler.h"
 #import "LookinStaticAsyncUpdateTask.h"
+#import "LKS_SwiftUIDisplayItemsMaker.h"
 
 @interface LKS_RequestHandler ()
 
@@ -120,6 +121,14 @@
         }];
         
     } else if (requestType == LookinRequestTypeCustomAttrModification) {
+        if ([object isKindOfClass:LookinCustomAttrModification.class] &&
+            [((LookinCustomAttrModification *)object).customSetterID hasPrefix:@"lookin.swiftui.binding."]) {
+            LookinCustomAttrModification *modification = object;
+            NSError *error = [LKS_SwiftUIDisplayItemsMaker modifyStateValue:modification.value identifier:modification.customSetterID];
+            if (error) { [self _submitResponseWithError:error requestType:requestType tag:tag]; }
+            else { [self _submitResponseWithData:nil requestType:requestType tag:tag]; }
+            return;
+        }
         BOOL succ = [LKS_CustomAttrModificationHandler handleModification:object];
         if (succ) {
             [self _submitResponseWithData:nil requestType:requestType tag:tag];
@@ -171,6 +180,18 @@
     } else if (requestType == LookinRequestTypeAllAttrGroups) {
         unsigned long oid = ((NSNumber *)object).unsignedLongValue;
         CALayer *layer = (CALayer *)[NSObject lks_objectWithOid:oid];
+        if ([LKS_SwiftUIDisplayItemsMaker isSnapshotObject:layer]) {
+            LookinStaticAsyncUpdateTask *task = [LookinStaticAsyncUpdateTask new];
+            task.oid = oid;
+            task.taskType = LookinStaticAsyncUpdateTaskTypeNoScreenshot;
+            LookinDisplayItemDetail *detail = [LKS_SwiftUIDisplayItemsMaker detailForObject:layer task:task];
+            if (detail.failureCode) {
+                [self _submitResponseWithError:LookinErr_ObjNotFound requestType:requestType tag:tag];
+            } else {
+                [self _submitResponseWithData:detail.attributesGroupList requestType:requestType tag:tag];
+            }
+            return;
+        }
         if (![layer isKindOfClass:[CALayer class]]) {
             [self _submitResponseWithError:LookinErr_ObjNotFound requestType:LookinRequestTypeAllAttrGroups tag:tag];
             return;

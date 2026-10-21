@@ -78,6 +78,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A76A15C728F43C9300086B38 /* Build configuration list for PBXNativeTarget "LookinDemoSwift" */;
 			buildPhases = (
+				72E98405FBD17D4909EA5B82 /* Lookin SwiftUI Debug AOP */,
 				A76A15AF28F43C9300086B38 /* Sources */,
 				A76A15B028F43C9300086B38 /* Frameworks */,
 				A76A15B128F43C9300086B38 /* Resources */,
@@ -120,7 +121,7 @@
 			);
 			mainGroup = A76A15AA28F43C9300086B38;
 			packageReferences = (
-				A72E06532AFFF7E300061A5B /* XCRemoteSwiftPackageReference "LookinServer" */,
+				A72E06532AFFF7E300061A5B /* XCLocalSwiftPackageReference ".." */,
 			);
 			productRefGroup = A76A15B428F43C9300086B38 /* Products */;
 			projectDirPath = "";
@@ -143,6 +144,35 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		72E98405FBD17D4909EA5B82 /* Lookin SwiftUI Debug AOP */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/LookinDemoSwift/ViewController.swift",
+				"$(SRCROOT)/LookinDemoSwift/AppDelegate.swift",
+				"$(SRCROOT)/LookinDemoSwift/SceneDelegate.swift",
+				"$(SRCROOT)/../../Tools/SwiftUIAOP/prepare.sh",
+				"$(SRCROOT)/../../Tools/SwiftUIAOP/Instrument.swift",
+			);
+			name = "Lookin SwiftUI Debug AOP";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/LookinSwiftUIAOP/overlay.json",
+				"$(DERIVED_FILE_DIR)/LookinSwiftUIAOP/report.json",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "export LOOKIN_SWIFT_MODULE=LookinServerSwift\n/bin/bash \"$SRCROOT\"/../../Tools/SwiftUIAOP/prepare.sh \"$SRCROOT\"/LookinDemoSwift/ViewController.swift \"$SRCROOT\"/LookinDemoSwift/AppDelegate.swift \"$SRCROOT\"/LookinDemoSwift/SceneDelegate.swift\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A76A15AF28F43C9300086B38 /* Sources */ = {
@@ -301,6 +331,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5V3Z8FVWHU;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LookinDemoSwift/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -313,6 +344,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -vfsoverlay $(DERIVED_FILE_DIR)/LookinSwiftUIAOP/overlay.json";
 				PRODUCT_BUNDLE_IDENTIFIER = Lookin.LookinDemoSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
@@ -378,21 +410,17 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		A72E06532AFFF7E300061A5B /* XCRemoteSwiftPackageReference "LookinServer" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/QMUI/LookinServer";
-			requirement = {
-				branch = develop;
-				kind = branch;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		A72E06532AFFF7E300061A5B /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../..;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		A72E06542AFFF7E300061A5B /* LookinServer */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A72E06532AFFF7E300061A5B /* XCRemoteSwiftPackageReference "LookinServer" */;
+			package = A72E06532AFFF7E300061A5B /* XCLocalSwiftPackageReference ".." */;
 			productName = LookinServer;
 		};
 		A77024F82AFFF72B005EA27B /* LookinServer */ = {
